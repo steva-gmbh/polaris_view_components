@@ -7,6 +7,7 @@
 .byebug_history
 /node_modules/
 /.idea
+/*.iml
 
 # demo app
 /demo/tmp/
