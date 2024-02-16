@@ -101,21 +101,25 @@ module Polaris
     end
 
     def polaris_icon_source(name)
-      paths = [
-        ViewComponents::Engine.root.join("app", "assets", "icons", "polaris", "#{name}.svg"),
-        Rails.root.join("app", "assets", "icons", "polaris", "#{name}.svg")
-      ]
-
-      path = paths.find { |path| File.exist?(path) }
-      return unless path
-
-      file = File.read(path)
-      doc = Nokogiri::HTML::DocumentFragment.parse(file)
-      svg = doc.at_css "svg"
-      svg[:class] = "Polaris-Icon__Svg"
-      svg[:focusable] = false
-      svg[:"aria-hidden"] = true
-      doc.to_html.html_safe
+      if name.include? 'fa-'
+        "<i class=\"fa #{name}\"></i>".html_safe
+      else
+        paths = [
+          ViewComponents::Engine.root.join("app", "assets", "icons", "polaris", "#{name}.svg"),
+          Rails.root.join("app", "assets", "icons", "polaris", "#{name}.svg")
+        ]
+  
+        path = paths.find { |path| File.exist?(path) }
+        return unless path
+  
+        file = File.read(path)
+        doc = Nokogiri::HTML::DocumentFragment.parse(file)
+        svg = doc.at_css "svg"
+        svg[:class] = "Polaris-Icon__Svg"
+        svg[:focusable] = false
+        svg[:"aria-hidden"] = true
+        doc.to_html.html_safe
+      end
     end
 
     def polaris_html_classes

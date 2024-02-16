@@ -791,3 +791,11 @@
   transform: rotate(45deg);
   background-color: var(--p-color-bg);
 }
+/* Font Awesome Icons in Polaris-Icon */
+.Polaris-Icon i.fa {
+    color: var(--p-icon);
+    font-size: 1rem;
+    padding-left: 2px;
+    padding-top: 2px;
+    vertical-align: top;
+}
