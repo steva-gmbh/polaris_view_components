@@ -9,5 +9,11 @@
     <% tabs.each do |tab| %>
       <%= tab %>
     <% end %>
+    <% if render_tabs_header? %>
+      <li class="TabbedCard_TabsHeader">
+        <%= tabs_header %>
+        <%= @tabs_header %>
+      </li>
+    <% end %>
   <% end %>
 <% end %>
