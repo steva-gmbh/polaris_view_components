@@ -1,11 +1,14 @@
 module Polaris
   class TabsComponent < Polaris::Component
     renders_many :tabs, Polaris::Tabs::TabComponent
+    renders_one :tabs_header, Polaris::Tabs::TabsHeader
 
     def initialize(fitted: false, wrapper_arguments: {}, **system_arguments)
       @fitted = fitted
       @wrapper_arguments = wrapper_arguments
       @system_arguments = system_arguments
+      @tabs_header = system_arguments[:tabs_header]
+      system_arguments[:tabs_header] = nil
     end
 
     def wrapper_arguments
@@ -32,6 +35,10 @@ module Polaris
 
     def renders?
       tabs.present?
+    end
+
+    def render_tabs_header?
+      tabs_header.present? || @tabs_header.present?
     end
   end
 end
