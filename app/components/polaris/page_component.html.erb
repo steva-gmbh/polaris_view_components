@@ -48,10 +48,10 @@
             </div>
           </div>
 
-          <% if @secondary_actions.any? || action_group.present? || render_primary_action? || has_pagination? %>
+          <% if @secondary_actions.any? || action_groups.present? || render_primary_action? || has_pagination? %>
             <div class="Polaris-Page-Header__RightAlign">
               <div class="Polaris-Page-Header__Actions">
-                <% if @secondary_actions.any? || action_group.present? %>
+                <% if @secondary_actions.any? || action_groups.present? %>
                   <div class="Polaris-ActionMenu Polaris-ActionMenu--mobile">
                     <div class="Polaris-ActionMenu-RollupActions__RollupActivator">
                       <%= polaris_popover(position: :below, alignment: :right) do |popover| %>
@@ -67,7 +67,7 @@
                             <% end %>
                           <% end %>
 
-                          <% if action_group.present? %>
+                          <% action_groups.each do |action_group| %>
                             <% action_list.with_section(title: action_group.title) do |section| %>
                               <% action_group.actions.each do |action| %>
                                 <% section.with_item(**action) { action[:content] } %>
@@ -89,7 +89,7 @@
                             <% end %>
                           <% end %>
                         <% end %>
-                        <% if action_group.present? %>
+                        <% action_groups.each do |action_group| %>
                           <% group.with_item do %>
                             <span class="Polaris-ActionMenu-SecondaryAction">
                               <%= action_group %>

@@ -11,7 +11,7 @@ module Polaris
       Polaris::ButtonComponent.new(primary: primary, **system_arguments)
     end
     renders_one :custom_primary_action
-    renders_one :action_group, "ActionGroupComponent"
+    renders_many :action_groups, "ActionGroupComponent"
 
     def initialize(
       title: nil,
