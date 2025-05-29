@@ -115,10 +115,12 @@ module Polaris
 
     class ActionGroupComponent < Polaris::Component
       attr_reader :title
+      attr_reader :icon
       attr_reader :actions
 
-      def initialize(title:, actions: [])
+      def initialize(title:, icon: nil, actions: [])
         @title = title
+        @icon = icon
         @actions = actions
       end
 
@@ -127,7 +129,7 @@ module Polaris
           position: :below,
           scrollable_shadow: false
         )) do |popover|
-          popover.with_button(disclosure: true) { @title }
+          popover.with_button(disclosure: true, icon_name: @icon) { @title  }
 
           polaris_action_list do |list|
             @actions.each do |action|
