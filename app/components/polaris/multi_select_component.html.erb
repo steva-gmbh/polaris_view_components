@@ -1,0 +1,68 @@
+<%= render Polaris::LabelledComponent.new(**@wrapper_arguments) do %>
+  <%= render(Polaris::BaseComponent.new(**@system_arguments)) do %>
+
+    <%= render(Polaris::PopoverComponent.new(
+      active: false,
+      sectioned: false,
+      position: :below,
+      alignment: :left,
+      fixed: false
+    )) do |popover| %>
+      <% popover.with_button(
+        disclosure: true,
+        disabled: @disabled,
+        data: {
+          polaris_multi_select_target: "button",
+          action: "polaris-multi-select#toggle"
+        }
+      ) do %>
+        <% if @label_inline %>
+          <%= polaris_box(padding_inline_end: "1") do %>
+            <%= polaris_text(as: :span, color: :subdued, truncate: true) do %>
+              <%= @label %>
+            <% end %>
+          <% end %>
+        <% end %>
+        <span data-polaris-multi-select-target="buttonText">
+          <%= button_text %>
+        </span>
+      <% end %>
+
+      <% popover.with_pane do %>
+        <%= polaris_box(
+          as: :ul,
+          padding: "2",
+          classes: "Polaris-OptionList",
+          data: {
+            polaris_multi_select_target: "optionList"
+          }
+        ) do %>
+          <% @options.each do |option| %>
+            <% option_val = option_value(option) %>
+            <% option_txt = option_text(option) %>
+            <% is_selected = @selected.include?(option_val) %>
+
+            <%= render(Polaris::OptionList::CheckboxComponent.new(
+              label: option_txt,
+              value: option_val,
+              checked: is_selected,
+              form: @form,
+              attribute: @attribute,
+              name: checkbox_input_name,
+              wrapper_arguments: {
+                data: {
+                  polaris_multi_select_target: "option",
+                  polaris_multi_select_value: option_val,
+                  polaris_multi_select_text: option_txt
+                }
+              },
+              data: {
+                action: "change->polaris-multi-select#toggleOption"
+              }
+            )) %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

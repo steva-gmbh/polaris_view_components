@@ -2529,6 +2529,173 @@ class Tooltip extends Controller {
   }
 }
 
+class MultiSelect extends Controller {
+  static targets = ["button", "buttonText", "optionList", "option"]
+  static values = { selected: Array }
+  connect() {
+    this.initializeSelectedValues()
+    if (this.selectedValue.length === 0) {
+      this.updateButtonText()
+    }
+    this.setupPopoverEventListeners()
+  }
+  disconnect() {
+    if (this.popoverObserver) {
+      this.popoverObserver.disconnect()
+    }
+  }
+  initializeSelectedValues() {
+    const initialSelected = this.selectedValue || []
+    this.selectedValue = [...initialSelected]
+    this.initialSelectedValue = [...initialSelected] // Store initial state for comparison
+    setTimeout(() => {
+      const checkboxSelected = []
+      this.optionTargets.forEach(option => {
+        const checkbox = option.querySelector('input[type="checkbox"]')
+        if (checkbox && checkbox.checked) {
+          const value = option.dataset.polarisMultiSelectValue
+          checkboxSelected.push(value)
+        }
+      })
+      if (checkboxSelected.length !== this.selectedValue.length ||
+        !checkboxSelected.every(val => this.selectedValue.includes(val))) {
+        this.selectedValue = checkboxSelected
+        this.initialSelectedValue = [...checkboxSelected] // Update initial state
+        this.updateButtonText()
+      }
+    }, 0)
+  }
+  setupPopoverEventListeners() {
+    const popoverElement = this.element.querySelector('.Polaris-Popover__PopoverOverlay')
+    if (popoverElement) {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+            const isOpen = popoverElement.classList.contains('Polaris-Popover__PopoverOverlay--open')
+            const wasPreviouslyOpen = this.wasPopoverOpen
+            if (isOpen && !wasPreviouslyOpen) {
+              this.dispatchPopoverOpenedEvent()
+              this.wasPopoverOpen = true
+            } else if (!isOpen && wasPreviouslyOpen) {
+              this.dispatchPopoverClosedEvent()
+              this.wasPopoverOpen = false
+            }
+          }
+        })
+      })
+      observer.observe(popoverElement, { attributes: true, attributeFilter: ['class'] })
+      this.popoverObserver = observer
+      this.wasPopoverOpen = popoverElement.classList.contains('Polaris-Popover__PopoverOverlay--open')
+    }
+  }
+  toggle(event) {
+    event.preventDefault()
+  }
+  toggleOption(event) {
+    const checkbox = event.target.type === 'checkbox' ? event.target : event.currentTarget.querySelector('input[type="checkbox"]')
+    const optionElement = checkbox.closest('[data-polaris-multi-select-target="option"]')
+    const value = optionElement.dataset.polarisMultiSelectValue
+    const text = optionElement.dataset.polarisMultiSelectText
+    setTimeout(() => {
+      if (checkbox.checked) {
+        this.addSelection(value, text)
+      } else {
+        this.removeSelection(value)
+      }
+      this.updateButtonText()
+      this.dispatchImmediateSelectionChangedEvent()
+    }, 0)
+  }
+  addSelection(value, text) {
+    if (!this.selectedValue.includes(value)) {
+      this.selectedValue = [...this.selectedValue, value]
+    }
+  }
+  removeSelection(value) {
+    this.selectedValue = this.selectedValue.filter(v => v !== value)
+  }
+  updateButtonText() {
+    const buttonTextElement = this.buttonTextTarget
+    if (this.selectedValue.length === 0) {
+      buttonTextElement.textContent = this.getPlaceholderText()
+    } else if (this.selectedValue.length === 1) {
+      buttonTextElement.textContent = this.getOptionText(this.selectedValue[0])
+    } else {
+      const firstOptionText = this.getOptionText(this.selectedValue[0])
+      const additionalCount = this.selectedValue.length - 1
+      buttonTextElement.textContent = `${firstOptionText} +${additionalCount}`
+    }
+  }
+  getOptionText(value) {
+    const optionElement = this.optionTargets.find(option =>
+      option.dataset.polarisMultiSelectValue === value
+    )
+    return optionElement ? optionElement.dataset.polarisMultiSelectText : value
+  }
+  getPlaceholderText() {
+    return this.element.dataset.placeholder || 'Select options'
+  }
+  checkAndDispatchSelectionChange() {
+    const hasChanged = this.hasSelectionChanged()
+    if (hasChanged) {
+      this.dispatchSelectionChangedEvent()
+      this.initialSelectedValue = [...this.selectedValue]
+    }
+  }
+  hasSelectionChanged() {
+    if (this.selectedValue.length !== this.initialSelectedValue.length) {
+      return true
+    }
+    const currentSorted = [...this.selectedValue].sort()
+    const initialSorted = [...this.initialSelectedValue].sort()
+    return !currentSorted.every((value, index) => value === initialSorted[index])
+  }
+  dispatchImmediateSelectionChangedEvent() {
+    const event = new CustomEvent('polaris-multi-select:immediateSelectionChanged', {
+      detail: {
+        selectedValues: [...this.selectedValue],
+        selectedTexts: this.selectedValue.map(value => this.getOptionText(value)),
+        count: this.selectedValue.length,
+        hasChangedFromInitial: this.hasSelectionChanged()
+      },
+      bubbles: true
+    })
+    this.element.dispatchEvent(event)
+  }
+  dispatchSelectionChangedEvent() {
+    const event = new CustomEvent('polaris-multi-select:selectionChanged', {
+      detail: {
+        selectedValues: [...this.selectedValue],
+        selectedTexts: this.selectedValue.map(value => this.getOptionText(value)),
+        count: this.selectedValue.length
+      },
+      bubbles: true
+    })
+    this.element.dispatchEvent(event)
+  }
+  dispatchPopoverOpenedEvent() {
+    const event = new CustomEvent('polaris-multi-select:popoverOpened', {
+      detail: {
+        selectedValues: [...this.selectedValue],
+        count: this.selectedValue.length
+      },
+      bubbles: true
+    })
+    this.element.dispatchEvent(event)
+  }
+  dispatchPopoverClosedEvent() {
+    const event = new CustomEvent('polaris-multi-select:popoverClosed', {
+      detail: {
+        selectedValues: [...this.selectedValue],
+        count: this.selectedValue.length
+      },
+      bubbles: true
+    })
+    this.element.dispatchEvent(event)
+    this.checkAndDispatchSelectionChange()
+  }
+}
+
 function registerPolarisControllers(application) {
   application.register("polaris-autocomplete", Autocomplete);
   application.register("polaris-button", Button);
@@ -2537,6 +2704,7 @@ function registerPolarisControllers(application) {
   application.register("polaris-data-table", DataTable);
   application.register("polaris-frame", Frame);
   application.register("polaris-modal", Modal);
+  application.register('polaris-multi-select', MultiSelect)
   application.register("polaris-option-list", OptionList);
   application.register("polaris", Polaris);
   application.register("polaris-popover", Popover);

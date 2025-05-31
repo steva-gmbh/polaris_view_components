@@ -48,6 +48,7 @@ module Polaris
       list:                     "Polaris::ListComponent",
       modal:                    "Polaris::ModalComponent",
       modal_section:            "Polaris::Modal::SectionComponent",
+      multi_select:             "Polaris::MultiSelectComponent",
       navigation:               "Polaris::NavigationComponent",
       navigation_list:          "Polaris::NavigationListComponent",
       option_list:              "Polaris::OptionListComponent",
