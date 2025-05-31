@@ -814,3 +814,12 @@
 .Polaris-LegacyTabs li.TabbedCard_TabsHeader .Polaris-Button {
     margin-top: 8px;
 }
+/* Fix vertical alignment of checkbox controls in option lists */
+.Polaris-OptionList-Option .Polaris-OptionList-Option__Checkbox {
+    align-self: center !important;
+    display: flex;
+    align-items: center;
+}
+.Polaris-OptionList-Option .Polaris-Choice {
+    align-items: center;
+}

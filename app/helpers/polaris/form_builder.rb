@@ -65,6 +65,16 @@ module Polaris
       render Polaris::SelectComponent.new(form: self, attribute: method, **options, &block)
     end
 
+    def polaris_multi_select(method, **options, &block)
+      apply_error_options(options, method)
+
+      value = object&.public_send(method)
+      if value.present?
+        options[:selected] = value
+      end
+      render Polaris::MultiSelectComponent.new(form: self, attribute: method, **options, &block)
+    end
+    
     def polaris_check_box(method, **options, &block)
       apply_error_options(options, method)
 

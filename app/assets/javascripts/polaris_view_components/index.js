@@ -5,6 +5,7 @@ import DataTable from './data_table_controller'
 import Dropzone from './dropzone_controller'
 import Frame from './frame_controller'
 import Modal from './modal_controller'
+import MultiSelect from './multi_select_controller'
 import OptionList from './option_list_controller'
 import Polaris from './polaris_controller'
 import Popover from './popover_controller'
@@ -26,6 +27,7 @@ export function registerPolarisControllers(application) {
   application.register('polaris-data-table', DataTable)
   application.register('polaris-frame', Frame)
   application.register('polaris-modal', Modal)
+  application.register('polaris-multi-select', MultiSelect)
   application.register('polaris-option-list', OptionList)
   application.register('polaris', Polaris)
   application.register('polaris-popover', Popover)
