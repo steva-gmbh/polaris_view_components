@@ -127,7 +127,8 @@ module Polaris
       def call
         render(Polaris::PopoverComponent.new(
           position: :below,
-          scrollable_shadow: false
+          scrollable_shadow: false,
+          append_to_body: true
         )) do |popover|
           popover.with_button(disclosure: true, icon_name: @icon) { @title  }
 
