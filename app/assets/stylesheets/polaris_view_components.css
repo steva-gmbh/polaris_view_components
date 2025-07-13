@@ -823,3 +823,9 @@
 .Polaris-OptionList-Option .Polaris-Choice {
     align-items: center;
 }
+html[class~="Polaris-Summer-Editions-2023"] .Polaris-Navigation .Polaris-Navigation__Content {
+  margin-top: var(--p-space-100);
+  margin-bottom: var(--p-space-100);
+  font-size: var(--p-font-size-350);
+  line-height: var(--p-font-line-height-500);
+}
