@@ -16,6 +16,11 @@
               <%= badge? ? badge : (polaris_badge { @badge }) %>
             </div>
           <% end %>
+          <% if content.present? %>
+            <div class="Polaris-Navigation__Content">
+              <%= content %>
+            </div>
+          <% end %>
         <% end %>
       <% else %>
         <%= button_to @url, **link_arguments do %>
