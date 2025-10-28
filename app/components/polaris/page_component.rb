@@ -117,11 +117,13 @@ module Polaris
       attr_reader :title
       attr_reader :icon
       attr_reader :actions
+      attr_reader :disabled
 
-      def initialize(title:, icon: nil, actions: [])
+      def initialize(title:, icon: nil, actions: [], disabled: false)
         @title = title
         @icon = icon
         @actions = actions
+        @disabled = disabled
       end
 
       def call
@@ -130,7 +132,7 @@ module Polaris
           scrollable_shadow: false,
           append_to_body: true
         )) do |popover|
-          popover.with_button(disclosure: true, icon_name: @icon) { @title  }
+          popover.with_button(disclosure: true, icon_name: @icon, disabled: disabled) { @title  }
 
           polaris_action_list do |list|
             @actions.each do |action|
