@@ -2139,15 +2139,35 @@ class Popover extends Controller {
     }
     this._target = null;
   }
+  getOppositePlacement(placement) {
+    const placementMap = {
+      'top': 'bottom',
+      'bottom': 'top',
+      'left': 'right',
+      'right': 'left',
+      'top-start': 'bottom-start',
+      'top-end': 'bottom-end',
+      'bottom-start': 'top-start',
+      'bottom-end': 'top-end',
+      'left-start': 'right-start',
+      'left-end': 'right-end',
+      'right-start': 'left-start',
+      'right-end': 'left-end',
+    };
+    return placementMap[placement] || 'bottom';
+  }
   updatePosition() {
     if (this.cleanup) {
       this.cleanup();
     }
     this.cleanup = autoUpdate(this.activator, this.target, (() => {
+      const placement = this.placementValue || 'bottom';
+      const oppositePlacement = this.getOppositePlacement(placement);
+      
       computePosition(this.activator, this.target, {
-        placement: this.placementValue,
+        placement: placement,
         middleware: [ offset(5), flip({
-          fallbackPlacements: [ this.placementValue ],
+          fallbackPlacements: [ oppositePlacement, placement ],
           fallbackStrategy: "bestFit"
         }), shift({
           padding: 5
