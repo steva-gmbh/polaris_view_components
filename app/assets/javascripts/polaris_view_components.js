@@ -2163,7 +2163,7 @@ class Popover extends Controller {
     this.cleanup = autoUpdate(this.activator, this.target, (() => {
       const placement = this.placementValue || 'bottom';
       const oppositePlacement = this.getOppositePlacement(placement);
-      
+
       computePosition(this.activator, this.target, {
         placement: placement,
         middleware: [ offset(5), flip({
@@ -2294,7 +2294,9 @@ class Select extends Controller {
   }
   update() {
     const option = this.selectTarget.options[this.selectTarget.selectedIndex];
-    this.selectedOptionTarget.innerText = option.text;
+    if (option !== undefined) {
+      this.selectedOptionTarget.innerText = option.text;
+    }
   }
   clearErrorMessages() {
     const polarisSelect = this.selectTarget.closest(".Polaris-Select");
